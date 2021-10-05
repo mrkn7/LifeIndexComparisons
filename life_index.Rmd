@@ -1,0 +1,118 @@
+---
+title: "life_index"
+author: "Mehmet Ali Erkan"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+Necessary libraries
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library(dplyr)
+library(readr)
+library(tidyverse)
+library(magrittr)
+library(ggplot2)
+library(tidyr)
+library(leaflet)
+library(sqldf)
+```
+
+
+
+READ and ARRANGE DATA SET
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+dataset <- read.csv("lifeindexbycountries.csv")
+dataset %<>% arrange(dataset, Country)
+
+lng_lat <- read.table("long_lat_cont.txt", header = T)
+
+#combine these two data sets
+cbind(dataset,lng_lat)
+
+dataset <- cbind(dataset,lng_lat)
+dataset1 <- dataset %>% select(., -c(latitude, longitude, Continent))
+```
+Analysis Part:
+
+Summaries:
+
+```{r message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+names(dataset) <- c("Quality","Purchasing","Safety","HealthCare","CostOfLivingIndex","PropertyPrice","Traffic","Pollution","Climate","Continent")
+sqldf("SELECT Continent,AVG(Quality),AVG(Purchasing),AVG(Safety),AVG(HealthCare),AVG(CostOfLivingIndex),AVG(PropertyPrice),AVG(Traffic),AVG(Pollution),AVG(Climate) FROM dataset GROUP BY Continent")
+```
+
+
+Plots:
+
+Quality of life Index
+```{r}
+ggplot(data=dataset,aes(x=Continent, y=mean(Quality.of.Life.Index), fill=Country)) +
+        geom_bar(stat="identity") +
+        theme_minimal() + labs(title = "Quality life index for Continent and Countries",
+                              x = "Continents", y = "Total Quality of Life Index")
+```
+
+Purchasing Power Index  
+```{r}
+ggplot(data=dataset,aes(x=Continent, y=(Purchasing.Power.Index), fill=Country)) +
+          geom_bar(stat="identity")+
+          theme_minimal()+ labs(title = "Purchasing Power Index for Continent and Countries",
+                                x = "Continents", y = "Total Purchasing Power Index")
+```
+
+Safety Index 
+```{r}
+ggplot(data=dataset,aes(x=Continent, y=Safety.Index, fill=Country)) +
+          geom_bar(stat="identity")+
+          theme_minimal() + labs(title = "Safety index for Continent and Countries",
+                                 x = "Continents", y = "Total Safety Index")
+```
+
+Health Care  
+```{r}
+ggplot(data=dataset,aes(x=Continent, y=Health.Care.Index, fill=Country)) +
+          geom_bar(stat="identity")+
+          theme_minimal() + labs(title = "Health Care index for Continent and Countries",
+                                 x = "Continents", y = "Total Health Care Index")
+```
+
+Cost of Living
+```{r}
+ggplot(data=dataset,aes(x=Continent, y=Cost.of.Living.Index, fill=Country)) +
+          geom_bar(stat="identity")+
+          theme_minimal() + labs(title = "Cost of Living Index for Continent and Countries",
+                                 x = "Continents", y = "Total Cost of Living Index")
+```
+
+Traffic Commute Time
+```{r}
+ggplot(data=dataset,aes(x=Continent, y=Traffic.Commute.Time.Index, fill=Country)) +
+          geom_bar(stat="identity")+
+          theme_minimal() + labs(title = "Traffic Commute Index for Continent and Countries",
+                                 x = "Continents", y = "Total Traffic Commute Index")
+```
+
+Pollution
+```{r}
+ggplot(data=dataset,aes(x=Continent, y=Pollution.Index, fill=Country)) +
+          geom_bar(stat="identity")+
+          theme_minimal() + labs(title = "Pollution index for Continent and Countries",
+                                 x = "Continents", y = "Total Pollution Index")
+```
+
+Climate 
+```{r}
+ggplot(data=dataset,aes(x=Continent, y=Climate.Index, fill=Country)) +
+          geom_bar(stat="identity")+
+          theme_minimal() + labs(title = "Climate index for Continent and Countries",
+                                 x = "Continents", y = "Total Climate Index")
+```
+
+Dataset: https://www.kaggle.com/dumbgeek/countries-dataset-2020?select=Quality+of+life+index+by+countries+2020.csv
+
+
+
+
+
